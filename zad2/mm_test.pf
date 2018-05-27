@@ -1,0 +1,257 @@
+#DEFINE N 100
+
+@test
+subroutine test_1x1()
+    use pfunit_mod
+    use matrix_multiplication2
+
+    real(kind = 8)                  :: first(1,1)
+    real(kind = 8)                  :: second(1,1)
+    real(kind = 8), allocatable     :: multiply(:,:)
+    integer                         :: first_shape(2)
+    integer                         :: second_shape(2)
+    integer                         :: status
+
+    !given
+    first_shape = shape(first)
+    second_shape = shape(second)
+    first = 1
+    second = 2
+    allocate(multiply(second_shape(1),first_shape(2)))
+
+    !when1
+    call mm_dot(first, second, multiply, status)
+
+    !then1
+    @assertEqual(2, multiply(1,1))
+
+    !when2
+    call mm_cache(first, second, multiply, status)
+
+    !then2
+    @assertEqual(2, multiply(1,1))
+
+    !when3
+    call mm_cache(first, second, multiply, status)
+
+    !then3
+    @assertEqual(2, multiply(1,1))
+
+    deallocate(expected_result)
+    deallocate(multiply)
+end subroutine
+
+@test
+subroutine test_1xN()
+    use pfunit_mod
+    use matrix_multiplication2
+
+    real(kind = 8)                  :: first(N,1)  
+    real(kind = 8)                  :: second(1,N)
+    real(kind = 8), allocatable     :: multiply(:,:), expected_result(:,:)
+    integer                         :: first_shape(2)
+    integer                         :: second_shape(2)
+    integer                         :: status 
+
+    !given
+    first_shape = shape(first)
+    second_shape = shape(second)
+    first = 1
+    second = 1
+    allocate(multiply(second_shape(1),first_shape(2)))
+    allocate(expected_result(second_shape(1),first_shape(2)))
+    expected_result = N
+
+
+    !when1
+    call mm_dot(first, second, multiply, status)
+
+    !then1
+    @assertEqual(expected_result, multiply)
+
+    !when2
+    call mm_cache(first, second, multiply, status)
+
+    !then2
+    @assertEqual(expected_result, multiply)
+
+    !when3
+    call mm_cache(first, second, multiply, status)
+
+    !then3
+    @assertEqual(expected_result, multiply)
+
+    deallocate(expected_result)
+    deallocate(multiply)
+end subroutine
+
+@test
+subroutine test_Nx1()
+    use pfunit_mod
+    use matrix_multiplication2
+
+    real(kind = 8)                  :: first(1,N)
+    real(kind = 8)                  :: second(N,1)
+    real(kind = 8), allocatable     :: multiply(:,:), expected_result(:,:)
+    integer                         :: first_shape(2)
+    integer                         :: second_shape(2)
+    integer                         :: status 
+
+    !given
+    first_shape = shape(first)
+    second_shape = shape(second)
+    first = 1
+    second = 1
+    allocate(multiply(second_shape(1),first_shape(2)))
+    allocate(expected_result(second_shape(1),first_shape(2)))
+    expected_result = 1
+
+    !when1
+    call mm_dot(first, second, multiply, status)
+
+    !then1
+    @assertEqual(expected_result, multiply)
+
+    !when2
+    call mm_cache(first, second, multiply, status)
+
+    !then2
+    @assertEqual(expected_result, multiply)
+
+    !when3
+    call mm_cache(first, second, multiply, status)
+
+    !then3
+    @assertEqual(expected_result, multiply)
+
+    deallocate(expected_result)
+    deallocate(multiply)
+end subroutine
+
+@test
+subroutine test_NxN()
+    use pfunit_mod
+    use matrix_multiplication2
+
+    real(kind = 8)                  :: first(N,N)
+    real(kind = 8)                  :: second(N,N)
+    real(kind = 8), allocatable     :: multiply(:,:), expected_result(:,:)
+    integer                         :: first_shape(2)
+    integer                         :: second_shape(2)
+    integer                         :: status
+
+    !given
+    first_shape = shape(first)
+    second_shape = shape(second)
+    first = 1
+    second = 1
+    allocate(multiply(second_shape(1),first_shape(2)))
+    allocate(expected_result(second_shape(1),first_shape(2)))
+    expected_result = N
+
+    !when1
+    call mm_dot(first, second, multiply, status)
+
+    !then1
+    @assertEqual(expected_result, multiply)
+
+    !when2
+    call mm_cache(first, second, multiply, status)
+
+    !then2
+    @assertEqual(expected_result, multiply)
+
+    !when3
+    call mm_cache(first, second, multiply, status)
+
+    !then3
+    @assertEqual(expected_result, multiply)
+
+    deallocate(expected_result)
+    deallocate(multiply)
+end subroutine
+
+
+@test
+subroutine test_regular()
+    use pfunit_mod
+    use matrix_multiplication2
+
+    real(kind = 8)                  :: first(5,10)
+    real(kind = 8)                  :: second(10,5)
+    real(kind = 8), allocatable     :: multiply(:,:), expected_result(:,:)
+    integer                         :: first_shape(2)
+    integer                         :: second_shape(2)
+    integer                         :: status
+
+    !given
+    first_shape = shape(first)
+    second_shape = shape(second)
+    first = 1
+    second = 1
+    allocate(multiply(second_shape(1),first_shape(2)))
+    allocate(expected_result(second_shape(1),first_shape(2)))
+    expected_result = 5
+
+        !when1
+    call mm_dot(first, second, multiply, status)
+
+    !then1
+    @assertEqual(expected_result, multiply)
+
+    !when2
+    call mm_cache(first, second, multiply, status)
+
+    !then2
+    @assertEqual(expected_result, multiply)
+
+    !when3
+    call mm_cache(first, second, multiply, status)
+
+    !then3
+    @assertEqual(expected_result, multiply)
+
+    deallocate(expected_result)
+    deallocate(multiply)
+end subroutine
+
+
+@test
+subroutine test_incorrect()
+    use pfunit_mod
+    use matrix_multiplication2
+
+    real(kind = 8)                  :: first(1,1)
+    real(kind = 8)                  :: second(2,2)
+    real(kind = 8), allocatable     :: multiply(:,:), expected_result(:,:)
+    integer                         :: first_shape(2)
+    integer                         :: second_shape(2)
+    integer                         :: status
+
+    !given
+    first_shape = shape(first)
+    second_shape = shape(second)
+    first = 1
+    second = 1
+    allocate(multiply(second_shape(1),first_shape(2)))
+
+    !when1
+    call mm_dot(first, second, multiply, status)
+
+    !then1
+    @assertEqual(1, status)
+
+    !when2
+    call mm_cache(first, second, multiply, status)
+
+    !then2
+    @assertEqual(1, status)
+
+    !when3
+    call mm_cache(first, second, multiply, status)
+
+    !then3
+    @assertEqual(1, status)
+
+    deallocate(multiply)
+end subroutine
